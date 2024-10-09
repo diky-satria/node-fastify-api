@@ -1,6 +1,7 @@
+const { sequelize } = require('../../database/models');
+const { QueryTypes } = require("sequelize");
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
-const User = require('../../models/user')
 require('dotenv').config()
 
 exports.login = async (req, reply) => {
@@ -8,14 +9,13 @@ exports.login = async (req, reply) => {
         const { email, password } = req.body;
 
         // CHECK USER BASE ON EMAIL
-        const user = await User.findOne({ email: email });
-        console.log('user ', user)
+        const user = await sequelize.query(`select * from users where email = '${email}'`, { type: QueryTypes.SELECT })
 
-        if (user) {
-            const pass_bcrypt = await bcrypt.compare(password, user.password);
+        if (user.length > 0) {
+            const pass_bcrypt = await bcrypt.compare(password, user[0].password);
 
             if (pass_bcrypt) {
-                const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, { expiresIn: "1hr"});
+                const token = jwt.sign({ id: user[0].id }, process.env.JWT_SECRET, { expiresIn: "1hr"});
 
                 reply.code(200).send({
                     status: 200,
@@ -47,7 +47,7 @@ exports.login = async (req, reply) => {
 exports.me = async (req, reply) => {
     try {
         const id = req.user.id
-        const user = await User.findById(id).select('-password');
+        const user = await sequelize.query(`select id, name, email, createdAt, updatedAt from users where id = ${id}`, { type: QueryTypes.SELECT })
 
         reply.code(200).send({
             status: 200,
@@ -68,14 +68,16 @@ exports.register = async (req, reply) => {
         const { name, email, password } = req.body;
 
         const encrypt_password = await bcrypt.hash(password, 10);
-
-        const newUser = new User({ name, email, password: encrypt_password });
-        const res = await newUser.save();
+        const newUser = await sequelize.models.users.create({
+            name, 
+            email, 
+            password: encrypt_password
+        })
 
         reply.code(200).send({
             status: 200,
             message: 'register successfully',
-            data: res
+            data: newUser
         })
     } catch (err) {
         console.log(err)

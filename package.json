@@ -13,6 +13,11 @@
     "dotenv": "^16.4.5",
     "fastify": "^5.0.0",
     "jsonwebtoken": "^9.0.2",
-    "mongoose": "^8.7.0"
+    "mongoose": "^8.7.0",
+    "sequelize": "^6.37.4",
+    "sqlite3": "^5.1.7"
+  },
+  "devDependencies": {
+    "sequelize-cli": "^6.6.2"
   }
 }

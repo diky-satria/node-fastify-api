@@ -1,39 +1,50 @@
-const User = require('../../models/user')
+const { sequelize } = require('../../database/models');
+const { QueryTypes } = require("sequelize");
 
 exports.getUser = async (req, reply) => {
     try {
-        const { page = 1, limit = 10, search = '' } = req.query;
+          let page = req.query.page || 0;
+          if (page < 1)
+              return reply
+              .code(400)
+              .send({ status: 400, message: "page must be greater than 0" });
 
-        const pageInt = parseInt(page, 10);
-        const limitInt = parseInt(limit, 10);
+          let limit = req.query.limit || 0;
+          if (limit < 1)
+              return reply
+              .code(400)
+              .send({ status: 400, message: "limit must be greater than 0" });
 
-        const searchQuery = search
-            ? {
-                $or: [
-                  { name: { $regex: search, $options: 'i' } },   // Search by name
-                  { email: { $regex: search, $options: 'i' } }   // Search by email
-                ]
+          let search = req.query.search || "";
+          let search_db = search
+              ? `WHERE name LIKE '%${search}%' OR email LIKE '%${search}%'`
+              : "";
+          let offset = (page - 1) * limit;
+
+          let total = await sequelize.query(
+              `SELECT count(*) as total FROM users ${search_db}`,
+              {
+              type: QueryTypes.SELECT,
               }
-            : {};
+          );
+          let total_page = Math.ceil(total[0].total / limit);
 
-          const totalUsers = await User.countDocuments(searchQuery);
-
-          const users = await User.find(searchQuery)
-            .skip((pageInt - 1) * limitInt)
-            .limit(limitInt);    
-
-          const totalPages = Math.ceil(totalUsers / limitInt);
+          let data = await sequelize.query(
+              `SELECT id, name, email FROM users ${search_db}
+              order by id desc limit ${offset},${limit}`,
+              { type: QueryTypes.SELECT }
+          );
 
           reply.code(200).send({
             status: 200,
             message: 'all users',
             data: {
-                totalUsers,
-                totalPages,
-                currentPage: pageInt,
-                usersPerPage: limitInt,
-                users
-            }
+              rows: data,
+              page: page,
+              limit: limit,
+              total_rows: total[0].total,
+              total_page: total_page,
+            },
         })
       } catch (err) {
         console.log(err)
@@ -47,8 +58,9 @@ exports.getUser = async (req, reply) => {
 exports.getUserById = async (req, reply) => {
     try {
         const {id} = req.params
-        const user = await User.findById(id);
-        if(!user){
+        const user = await sequelize.query(`select * from users where id = ${id}`, { type: QueryTypes.SELECT })
+
+        if(user.length <= 0){
             reply.code(400).send({
                 status: 400,
                 message: 'user not found'
@@ -72,9 +84,11 @@ exports.getUserById = async (req, reply) => {
 exports.createUser = async (req, reply) => {
     try {
         const { name, email, password } = req.body
-
-        const newUser = new User({ name, email, password });
-        const res = await newUser.save();
+        const res = await sequelize.models.users.create({
+          name, 
+          email, 
+          password
+        })
 
         reply.code(201).send({
             status: 201,
@@ -95,20 +109,25 @@ exports.updateUser = async (req, reply) => {
         const {name, email, password} = req.body
 
         const {id} = req.params
-        const user = await User.findById(id);
-        if(!user){
+        const user = await sequelize.query(`select * from users where id = ${id}`, { type: QueryTypes.SELECT })
+        if(user.length <= 0){
             reply.code(400).send({
                 status: 400,
                 message: 'user not found'
             })
         }
 
-        await User.updateOne(
-            { _id: id },
-            { $set: { name: name, email: email, password: password } 
-        });
+        await sequelize.models.users.update({
+          name: name, 
+          email: email, 
+          password: password
+        },{
+          where: {
+            id: id
+          }
+        })
 
-        const userUpdated = await User.findById(id);
+        const userUpdated = await sequelize.query(`select * from users where id = ${id}`, { type: QueryTypes.SELECT })
         
         reply.code(200).send({
             status: 200,
@@ -127,15 +146,19 @@ exports.updateUser = async (req, reply) => {
 exports.deleteUser = async (req, reply) => {
     try {
         const {id} = req.params
-        const user = await User.findById(id);
-        if(!user){
+        const user = await sequelize.query(`select * from users where id = ${id}`, { type: QueryTypes.SELECT })
+        if(user.length <= 0){
             reply.code(400).send({
                 status: 400,
                 message: 'user not found'
             })
         }
 
-        await User.deleteOne({ _id: id });
+        await sequelize.models.users.destroy({
+          where: {
+            id: id
+          }
+        })
 
         reply.code(200).send({
             status: 200,
