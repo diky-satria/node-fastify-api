@@ -50,12 +50,12 @@ db.Sequelize = Sequelize;
 //     password: 'password'
 //   })
 
-//   let cek = await db.sequelize.query(
-//     `SELECT * FROM users`,
-//         {
-//           type: QueryTypes.SELECT,
-//         }
-//     );
+  // let cek = await db.sequelize.query(
+  //   `SELECT * FROM users`,
+  //       {
+  //         type: QueryTypes.SELECT,
+  //       }
+  //   );
 
 //   console.log({
 //     cek: cek

@@ -3,6 +3,41 @@ const fastify = require('fastify')({ logger: false })
 require('./src/config/database.js')
 require('dotenv').config()
 
+// SWAGGER
+fastify.register(require('@fastify/swagger'), {
+  swagger: {
+    info: {
+      title: 'Fastify API',
+      description: 'API documentation for Fastify',
+      version: '1.0.0'
+    },
+    host: 'localhost:5000', // Adjust according to your environment
+    schemes: ['http'],
+    consumes: ['application/json'],
+    produces: ['application/json'],
+    securityDefinitions: {
+      Bearer: {
+        type: 'apiKey',
+        name: 'Authorization',
+        in: 'header',
+        description: 'Enter your Bearer token in the format **Bearer <token>**'
+      }
+    }
+  }
+});
+
+// SWAGGER UI SETUP
+fastify.register(require('@fastify/swagger-ui'), {
+  routePrefix: '/documentation',
+  uiConfig: {
+    docExpansion: 'full',
+    deepLinking: false
+  },
+  staticCSP: true,
+  transformSpecification: (swaggerObject, request, reply) => { return swaggerObject },
+  transformSpecificationClone: true
+});
+
 // IMPORT ROUTER
 const rootRouter = require('./src/routes/index.js')
 const authRouter = require('./src/routes/AuthRouter/index.js')
