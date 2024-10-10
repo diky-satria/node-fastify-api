@@ -62,7 +62,7 @@ exports.login = async (req, reply) => {
             } else {
                 reply.code(422).send({
                     status: 422,
-                    message: 'Email or Password is wrong',
+                    message: 'Password is wrong',
                 })
             }
         }else{
@@ -87,10 +87,11 @@ exports.me = async (req, reply) => {
         const id = req.user.id
         const user = await sequelize.query(`select id, name, email, createdAt, updatedAt from users where id = ${id}`, { type: QueryTypes.SELECT })
 
+        console.log('user ', user)
         reply.code(200).send({
             status: 200,
             message: 'user logged in detail',
-            data: user
+            data: user[0]
         })
     } catch (err) {
         console.log(err)

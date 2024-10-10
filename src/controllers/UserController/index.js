@@ -159,8 +159,8 @@ exports.updateUser = async (req, reply) => {
         const userVal = await userByEmail(email);
         const validator = make(valReq, {
             'name': 'required|string|min:3',
+            'email_old': 'string|email',
             'email': [
-                'required',
                 'string',
                 'email',
                 function (value, fail, attribute) {

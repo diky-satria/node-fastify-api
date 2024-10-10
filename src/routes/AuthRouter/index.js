@@ -1,11 +1,11 @@
 const { login, register, me } = require('../../controllers/AuthController')
 const VerifyToken = require('../../middleware/index.js')
-const { SRoot, SLogin, SMe } = require('../../swagger/index.js')
+const { SHide,SLogin, SMe } = require('../../swagger/index.js')
 
 const authRouter = (fastify, option, done) => {
     fastify.post('/login', SLogin, login)
-    fastify.post('/register', register)
-    fastify.get('/me', { preHandler: [VerifyToken] }, me)
+    fastify.post('/register', { schema: SHide}, register)
+    fastify.get('/me', { schema: SMe, preHandler: [VerifyToken] }, me)
 
     done()
 }

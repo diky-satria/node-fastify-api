@@ -1,10 +1,10 @@
 const jwt = require('jsonwebtoken')
 require('dotenv').config()
 
-const VerifyToken = (request, reply, done) => {
-    const getToken = request.headers['authorization'];
+const VerifyToken = (req, reply, done) => {
+    const getToken = req.headers['authorization'];
     if (!getToken) {
-        return reply.code(401).send({
+        reply.code(401).send({
             status: 401,
             message: "Unauthorized",
         });
@@ -14,13 +14,13 @@ const VerifyToken = (request, reply, done) => {
   
     jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
       if (err) {
-        return reply.status(401).send({
+        reply.status(401).send({
             status: 401,
             message: "Unauthorized - Invalid token",
         });
       }
       
-      request.user = decoded;
+      req.user = decoded;
       done();
     });
   };

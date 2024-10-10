@@ -16,26 +16,33 @@ fastify.register(require('@fastify/swagger'), {
     consumes: ['application/json'],
     produces: ['application/json'],
     securityDefinitions: {
-      Bearer: {
+      BearerAuth: {
         type: 'apiKey',
         name: 'Authorization',
         in: 'header',
-        description: 'Enter your Bearer token in the format **Bearer <token>**'
+        description: 'Enter your Bearer token in the format **Bearer &lt;token&gt;**',
       }
-    }
-  }
+    },
+    security: [
+      {
+        BearerAuth: []
+      }
+    ],
+  },
+  exposeRoute: false,
 });
 
 // SWAGGER UI SETUP
 fastify.register(require('@fastify/swagger-ui'), {
-  routePrefix: '/documentation',
+  routePrefix: '/api/documentation',
   uiConfig: {
-    docExpansion: 'full',
-    deepLinking: false
+    docExpansion: 'none',
+    deepLinking: false,
   },
   staticCSP: true,
   transformSpecification: (swaggerObject, request, reply) => { return swaggerObject },
-  transformSpecificationClone: true
+  transformSpecificationClone: true,
+  rootRouter: require('./src/routes/index.js'),
 });
 
 // IMPORT ROUTER
