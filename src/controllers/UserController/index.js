@@ -1,5 +1,6 @@
 const { sequelize } = require('../../database/models');
 const { QueryTypes } = require("sequelize");
+const {logger} = require('../../config/logging.js')
 
 // VALIDATOR
 const { make } = require('simple-body-validator');
@@ -52,6 +53,7 @@ exports.getUser = async (req, reply) => {
         })
       } catch (err) {
         console.log(err)
+        logger.log({ level: "error", label: "Req getUser", message: err });
         reply.code(500).send({
             status: 500,
             message: 'Internal server error',
@@ -78,6 +80,7 @@ exports.getUserById = async (req, reply) => {
         })
     } catch (err) {
         console.log(err)
+        logger.log({ level: "error", label: "Req getUserById", message: err });
         reply.code(500).send({
             status: 500,
             message: 'Internal server error',
@@ -135,6 +138,7 @@ exports.createUser = async (req, reply) => {
         })
     } catch (err) {
         console.log(err)
+        logger.log({ level: "error", label: "Req createUser", message: err });
         reply.code(500).send({
             status: 500,
             message: 'Internal server error',
@@ -207,6 +211,7 @@ exports.updateUser = async (req, reply) => {
         })
     } catch (err) {
         console.log(err)
+        logger.log({ level: "error", label: "Req updateUser", message: err });
         reply.code(500).send({
             status: 500,
             message: 'Internal server error',
@@ -237,6 +242,7 @@ exports.deleteUser = async (req, reply) => {
         })
     } catch (err) {
         console.log(err)
+        logger.log({ level: "error", label: "Req deteleUser", message: err });
         reply.code(500).send({
             status: 500,
             message: 'Internal server error',

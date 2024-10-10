@@ -2,6 +2,7 @@ const { sequelize } = require('../../database/models');
 const { QueryTypes } = require("sequelize");
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
+const {logger} = require('../../config/logging.js')
 
 // VALIDATOR
 const { make } = require('simple-body-validator');
@@ -73,6 +74,7 @@ exports.login = async (req, reply) => {
         
     } catch (err) {
         console.log(err)
+        logger.log({ level: "error", label: "Req login", message: err });
         reply.code(500).send({
             status: 500,
             message: 'Internal server error',
@@ -92,6 +94,7 @@ exports.me = async (req, reply) => {
         })
     } catch (err) {
         console.log(err)
+        logger.log({ level: "error", label: "Req me", message: err });
         reply.code(500).send({
             status: 500,
             message: 'Internal server error',
@@ -151,6 +154,7 @@ exports.register = async (req, reply) => {
         })
     } catch (err) {
         console.log(err)
+        logger.log({ level: "error", label: "Req register", message: err });
         reply.code(500).send({
             status: 500,
             message: 'Internal server error',
