@@ -61,6 +61,7 @@ exports.login = async (req, reply) => {
       if (pass_bcrypt) {
         const token = jwt.sign({ id: user[0].id }, process.env.JWT_SECRET, {
           expiresIn: "1hr",
+          // expiresIn: "1m",
         });
 
         reply.code(200).send({
