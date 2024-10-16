@@ -1,0 +1,7 @@
+INPLATFORM DATABASES
+-------------------------------------------
+
+BASEURL = process.env.URL_INPLATFORM
+
+FOLDERS/TABLES:
+    1. BASEURL/users/users.json

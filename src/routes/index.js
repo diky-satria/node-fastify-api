@@ -1,10 +1,10 @@
-const {rootController} = require('./../controllers')
-const { SHide } = require('../swagger/index.js')
+const { rootController } = require("./../controllers");
+const { SHide } = require("../swagger/index.js");
 
 const rootRouter = (fastify, option, done) => {
-    fastify.get('/', { schema: SHide}, rootController)
+  fastify.get("/", { schema: SHide }, rootController);
 
-    done()
-}
+  done();
+};
 
-module.exports = rootRouter
+module.exports = rootRouter;

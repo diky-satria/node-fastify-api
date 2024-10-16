@@ -450,3 +450,336 @@ exports.SDeleteUser = {
     },
   },
 };
+
+// INPLATFORM
+exports.SGetUsersInplatform = {
+  description: "Retrieve all users from the inplatform",
+  tags: ["Inplatform"],
+  summary: "Fetch all users",
+  security: [{ BearerAuth: [] }],
+  response: {
+    200: {
+      description:
+        "Successful response with a list of users sorted by ID in descending order",
+      type: "object",
+      properties: {
+        status: { type: "integer", example: 200 },
+        message: { type: "string", example: "inplatform all users" },
+        data: {
+          type: "array",
+          items: {
+            type: "object",
+            properties: {
+              id: { type: "integer" },
+              name: { type: "string" },
+              email: { type: "string" },
+              password: { type: "string" },
+              created_at: { type: "string" },
+              updated_at: { type: "string" },
+            },
+          },
+        },
+      },
+    },
+    401: {
+      description: "Unauthenticated request",
+      type: "object",
+      properties: {
+        status: { type: "integer" },
+        message: { type: "string" },
+      },
+    },
+    500: {
+      description: "Internal server error",
+      type: "object",
+      properties: {
+        status: { type: "integer" },
+        message: { type: "string" },
+      },
+    },
+  },
+};
+
+exports.SGetUserByIdInplatform = {
+  description: "Retrieve user details by user ID from the inplatform",
+  tags: ["Inplatform"],
+  summary: "Fetch user by ID",
+  security: [{ BearerAuth: [] }],
+  params: {
+    type: "object",
+    properties: {
+      id: {
+        type: "integer",
+        description: "ID of the user to retrieve",
+      },
+    },
+    required: ["id"],
+  },
+  response: {
+    200: {
+      description: "Successful response with the user details",
+      type: "object",
+      properties: {
+        status: { type: "integer" },
+        message: { type: "string" },
+        data: {
+          type: "object",
+          properties: {
+            id: { type: "integer" },
+            name: { type: "string" },
+            email: { type: "string" },
+            password: { type: "string" },
+            created_at: { type: "string" },
+            updated_at: { type: "string" },
+          },
+        },
+      },
+    },
+    400: {
+      description: "User not found",
+      type: "object",
+      properties: {
+        status: { type: "integer" },
+        message: { type: "string" },
+      },
+    },
+    401: {
+      description: "Unauthenticated request",
+      type: "object",
+      properties: {
+        status: { type: "integer" },
+        message: { type: "string" },
+      },
+    },
+    500: {
+      description: "Internal server error",
+      type: "object",
+      properties: {
+        status: { type: "integer" },
+        message: { type: "string" },
+      },
+    },
+  },
+};
+
+exports.SCreateUserInplatform = {
+  description: "Create a new user in the inplatform",
+  tags: ["Inplatform"],
+  summary: "Create user",
+  security: [{ BearerAuth: [] }],
+  body: {
+    type: "object",
+    required: ["name", "email", "password"],
+    properties: {
+      name: {
+        type: "string",
+        description: "The name of the user",
+      },
+      email: {
+        type: "string",
+        description: "The user's email address",
+      },
+      password: {
+        type: "string",
+        description: "The user's password",
+      },
+    },
+  },
+  response: {
+    201: {
+      description: "User created successfully",
+      type: "object",
+      properties: {
+        status: { type: "integer" },
+        message: { type: "string" },
+        data: {
+          type: "object",
+          properties: {
+            id: { type: "integer" },
+            name: { type: "string" },
+            email: { type: "string" },
+            password: { type: "string" },
+            created_at: { type: "string" },
+            updated_at: { type: "string" },
+          },
+        },
+      },
+    },
+    401: {
+      description: "Unauthenticated request",
+      type: "object",
+      properties: {
+        status: { type: "integer" },
+        message: { type: "string" },
+      },
+    },
+    422: {
+      description: "Validation error",
+      type: "object",
+      properties: {
+        status: { type: "integer" },
+        message: { type: "string" },
+        errors: {
+          type: "object",
+          additionalProperties: { type: "string" },
+        },
+      },
+    },
+    500: {
+      description: "Internal server error",
+      type: "object",
+      properties: {
+        status: { type: "integer" },
+        message: { type: "string" },
+      },
+    },
+  },
+};
+
+exports.SUpdateUserInplatform = {
+  description: "Update a user in the inplatform",
+  tags: ["Inplatform"],
+  summary: "Update user",
+  security: [{ BearerAuth: [] }],
+  params: {
+    type: "object",
+    required: ["id"],
+    properties: {
+      id: {
+        type: "integer",
+        description: "The ID of the user to update",
+      },
+    },
+  },
+  body: {
+    type: "object",
+    required: ["name", "email_old", "email", "password"],
+    properties: {
+      name: {
+        type: "string",
+        description: "The new name of the user",
+      },
+      email_old: {
+        type: "string",
+        description: "The old email of the user",
+      },
+      email: {
+        type: "string",
+        description: "The new email of the user",
+      },
+      password: {
+        type: "string",
+        description: "The new password of the user",
+      },
+    },
+  },
+  response: {
+    200: {
+      description: "User updated successfully",
+      type: "object",
+      properties: {
+        status: { type: "integer" },
+        message: {
+          type: "string",
+        },
+        data: {
+          type: "object",
+          properties: {
+            id: { type: "integer" },
+            name: { type: "string" },
+            email: { type: "string" },
+            password: { type: "string" },
+            updated_at: { type: "string" },
+          },
+        },
+      },
+    },
+    400: {
+      description: "User not found",
+      type: "object",
+      properties: {
+        status: { type: "integer" },
+        message: { type: "string" },
+      },
+    },
+    401: {
+      description: "Unauthenticated request",
+      type: "object",
+      properties: {
+        status: { type: "integer" },
+        message: { type: "string" },
+      },
+    },
+    422: {
+      description: "Validation error",
+      type: "object",
+      properties: {
+        status: { type: "integer" },
+        message: { type: "string" },
+        errors: {
+          type: "object",
+          additionalProperties: { type: "string" },
+        },
+      },
+    },
+    500: {
+      description: "Internal server error",
+      type: "object",
+      properties: {
+        status: { type: "integer" },
+        message: { type: "string" },
+      },
+    },
+  },
+};
+
+exports.SDeleteUserInplatform = {
+  description: "Delete a user by ID from the inplatform",
+  tags: ["Inplatform"],
+  summary: "Delete user",
+  security: [{ BearerAuth: [] }],
+  params: {
+    type: "object",
+    required: ["id"],
+    properties: {
+      id: {
+        type: "integer",
+        description: "The ID of the user to delete",
+      },
+    },
+  },
+  response: {
+    200: {
+      description: "User deleted successfully",
+      type: "object",
+      properties: {
+        status: { type: "integer" },
+        message: { type: "string" },
+      },
+    },
+    400: {
+      description: "User not found",
+      type: "object",
+      properties: {
+        status: { type: "integer" },
+        message: { type: "string" },
+      },
+    },
+    401: {
+      description: "Unauthenticated request",
+      type: "object",
+      properties: {
+        status: { type: "integer" },
+        message: { type: "string" },
+      },
+    },
+    500: {
+      description: "Internal server error",
+      type: "object",
+      properties: {
+        status: { type: "integer" },
+        message: { type: "string" },
+      },
+    },
+  },
+};

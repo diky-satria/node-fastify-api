@@ -1,6 +1,7 @@
 const { sequelize } = require("../../database/models");
 const { QueryTypes } = require("sequelize");
 const { logger } = require("../../config/logging.js");
+const bcrypt = require("bcryptjs");
 
 // VALIDATOR
 const { make } = require("simple-body-validator");
@@ -144,10 +145,11 @@ exports.createUser = async (req, reply) => {
       });
     }
 
+    const encrypt_password = await bcrypt.hash(password, 10);
     const res = await sequelize.models.users.create({
       name,
       email,
-      password,
+      password: encrypt_password,
     });
 
     reply.code(201).send({
@@ -218,11 +220,12 @@ exports.updateUser = async (req, reply) => {
       });
     }
 
+    const encrypt_password = await bcrypt.hash(password, 10);
     await sequelize.models.users.update(
       {
         name: name,
         email: email,
-        password: password,
+        password: encrypt_password,
       },
       {
         where: {

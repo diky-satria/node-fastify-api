@@ -61,11 +61,13 @@ fastify.register(cors, {
 const rootRouter = require("./src/routes/index.js");
 const authRouter = require("./src/routes/AuthRouter/index.js");
 const userRouter = require("./src/routes/UserRouter/index.js");
+const inplatformRouter = require("./src/routes/InplatformRouter/index.js");
 
 // ROUTE REGISTERED
 fastify.register(rootRouter, { prefix: "/" });
 fastify.register(authRouter, { prefix: "/api/v1/auth" });
 fastify.register(userRouter, { prefix: "/api/v1/user" });
+fastify.register(inplatformRouter, { prefix: "/api/v1/inplatform" });
 
 // LISTEN
 const port = process.env.PORT;
